@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server');
+const crypto = require('crypto');
 
 const users = [
     {
@@ -22,6 +23,17 @@ const typeDefs = gql`
         getUsers: [User]!
         getUser(id: ID!): User
     }
+    input UserInput {
+        firstName: String!
+        lastName: String!
+        email: String!
+        password: String!
+    }
+
+    type Mutation {
+        createUser(newUser: UserInput!): User
+    }
+
     type User {
         id: ID!
         firstName: String!
@@ -35,6 +47,16 @@ const resolvers = {
         getUsers: () => users,
         getUser: (_, { id }) => {
             return users.find((user) => user.id == id);
+        },
+    },
+    Mutation: {
+        createUser(_, { newUser }) {
+            const user = {
+                id: crypto.randomUUID(),
+                ...newUser,
+            };
+            users.push(user);
+            return user;
         },
     },
 };
