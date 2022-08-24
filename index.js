@@ -63,7 +63,8 @@ const typeDefs = gql`
 const resolvers = {
     Query: {
         getUsers: () => users,
-        getUser: (_, { id }) => {
+        getUser: (_, { id }, { userLoggedIn }) => {
+            console.log(userLoggedIn);
             return users.find((user) => user.id == id);
         },
     },
@@ -84,7 +85,13 @@ const resolvers = {
     },
 };
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: {
+        userLoggedIn: true,
+    },
+});
 
 server.listen({ port: 5000 }).then(({ url }) => {
     console.log(`Server ready at ${url}`);
