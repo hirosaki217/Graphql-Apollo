@@ -17,7 +17,20 @@ const users = [
         password: '12346',
     },
 ];
-
+const Todos = [
+    {
+        title: 'buy book',
+        by: 1,
+    },
+    {
+        title: 'write code',
+        by: 2,
+    },
+    {
+        title: 'record video',
+        by: 2,
+    },
+];
 const typeDefs = gql`
     type Query {
         getUsers: [User]!
@@ -39,6 +52,11 @@ const typeDefs = gql`
         firstName: String!
         lastName: String!
         email: String!
+        todos: [Todo]
+    }
+    type Todo {
+        title: String
+        by: ID
     }
 `;
 
@@ -47,6 +65,11 @@ const resolvers = {
         getUsers: () => users,
         getUser: (_, { id }) => {
             return users.find((user) => user.id == id);
+        },
+    },
+    User: {
+        todos: (parent) => {
+            return Todos.filter((todo) => todo.by == parent.id);
         },
     },
     Mutation: {
