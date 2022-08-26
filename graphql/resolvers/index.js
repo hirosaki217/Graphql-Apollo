@@ -1,10 +1,26 @@
 const { PrismaClient } = require('@prisma/client');
-const { AuthenticationError } = require('apollo-server');
+const { AuthenticationError, ForbiddenError } = require('apollo-server');
 const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 const jwt = require('jsonwebtoken');
 
 module.exports = {
+    Query: {
+        getUsers: async (_, args, { userId }) => {
+            if (!userId) throw new ForbiddenError('You must be loggin');
+            const users = prisma.user.findMany({
+                orderBy: {
+                    createdAt: 'desc',
+                },
+                where: {
+                    id: {
+                        not: userId,
+                    },
+                },
+            });
+            return users;
+        },
+    },
     Mutation: {
         signupUser: async (_, { newUser }) => {
             const testUser = await prisma.user.findUnique({ where: { email: newUser.email } });
