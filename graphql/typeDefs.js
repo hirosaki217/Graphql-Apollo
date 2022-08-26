@@ -11,8 +11,18 @@ module.exports = gql`
         password: String!
     }
 
+    input UserSigninInput {
+        email: String!
+        password: String!
+    }
+
     type Mutation {
-        signupUser(newUser: UserInput): User
+        signupUser(newUser: UserInput!): User
+        signinUser(userSignin: UserSigninInput!): Token
+    }
+
+    type Token {
+        token: String!
     }
 
     type User {
