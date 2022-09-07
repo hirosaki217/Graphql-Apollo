@@ -1,5 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
-const { AuthenticationError, ForbiddenError } = require('apollo-server');
+const { AuthenticationError, ForbiddenError } = require('apollo-server-express');
 const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 const jwt = require('jsonwebtoken');

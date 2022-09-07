@@ -1,8 +1,14 @@
 const { PrismaClient } = require('@prisma/client');
-const { AuthenticationError, ForbiddenError } = require('apollo-server');
+const { AuthenticationError, ForbiddenError } = require('apollo-server-express');
 const bcrypt = require('bcryptjs');
-const prisma = new PrismaClient();
 const jwt = require('jsonwebtoken');
+const { PubSub } = require('graphql-subscriptions');
+
+const prisma = new PrismaClient();
+const pubsub = new PubSub();
+
+const MESSAGE_ADDED = 'MESSAGE_ADDED';
+
 module.exports = {
     Query: {
         messagesByUser: async (_, { receiverId }, { userId }) => {
@@ -15,6 +21,7 @@ module.exports = {
                     ],
                 },
             });
+
             return messages;
         },
     },
@@ -27,7 +34,13 @@ module.exports = {
                     senderId: userId,
                 },
             });
+            pubsub.publish(MESSAGE_ADDED, { messageAdded: message });
             return message;
+        },
+    },
+    Subscription: {
+        messageAdded: {
+            subcribe: () => pubsub.asyncIterator([MESSAGE_ADDED]),
         },
     },
 };

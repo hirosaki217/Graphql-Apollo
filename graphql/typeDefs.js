@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server');
+const { gql } = require('apollo-server-express');
 
 module.exports = gql`
     type Query {
@@ -40,5 +40,9 @@ module.exports = gql`
         firstName: String!
         lastName: String!
         email: String!
+    }
+
+    type Subscription {
+        messageAdded: Message
     }
 `;
